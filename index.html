@@ -1,16 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-HK">
 <head>
   <meta charset="utf-8">
-  <title>IG 高意向名單</title>
+  <title>篩單王｜回覆 123 的客戶</title>
 </head>
 <body>
-  <h2>回覆 123 的客戶</h2>
+
+  <h2>📥 回覆 123 的 WhatsApp 客戶</h2>
   <ul id="list"></ul>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      orderBy,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC6fLBjLtV2OfTlfta-pXVsIHAUtltBX-g",
@@ -18,15 +25,15 @@
       projectId: "project-253944507993954601",
       storageBucket: "project-253944507993954601.firebasestorage.app",
       messagingSenderId: "80135604140",
-      appId: "1:80135604140:web:be6eccae8b79d494781c09",
-      measurementId: "G-FFXVPBBSEJ"
+      appId: "1:80135604140:web:be6eccae8b79d494781c09"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // ✅ 對齊後端 collection
     const q = query(
-      collection(db, "leads"),
+      collection(db, "ws_messages"),
       orderBy("timestamp", "desc")
     );
 
@@ -34,13 +41,17 @@
 
     onSnapshot(q, (snapshot) => {
       list.innerHTML = "";
+
       snapshot.forEach(doc => {
         const d = doc.data();
         const li = document.createElement("li");
-        li.textContent = `${d.fromPhone} → ${d.message}`;
+
+        li.textContent = `📱 ${d.from} → ${d.text}`;
+
         list.appendChild(li);
       });
     });
   </script>
+
 </body>
 </html>
