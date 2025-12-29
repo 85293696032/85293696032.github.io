@@ -85,10 +85,10 @@ if (text === "123") {
       await db.collection("ws_messages").add({
         from,
         text,
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        phoneNumberId:phoneNumberId
       });
 
-      // --- 修改這裡：改用 WHATSAPP_TOKEN.value() ---
       const tokenValue = WHATSAPP_TOKEN.value(); 
       
       console.log(`📤 正在發送回覆給: ${from}`);

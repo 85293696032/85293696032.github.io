@@ -220,7 +220,7 @@
 
     const q = query(
       collection(db, "ws_messages"),
-      orderBy("timestamp", "desc")
+      orderBy("createdAt", "desc")
     );
 
     const list = document.getElementById("list");
@@ -234,9 +234,10 @@
 
         let 原號碼 = d.from;
         let 號碼保護 = 原號碼.substring(0, 5) + "****" + 原號碼.substring(9);
-        let timestamp = 轉換日期格式(d.timestamp);
+        let timestamp = 轉換日期格式(d.createdAt);
 
-        li.innerHTML = `📱 ${號碼保護} ｜ ${timestamp}`;
+        //li.innerHTML = `<a href="https://wa.me/${d.from}/" target="_blank">📱 ${d.from} ｜ ${timestamp}</a>`;
+        li.innerHTML = `<a href="https://wa.me/85264071181/?text=/我要購買篩單王" target="_blank">📱 ${號碼保護} ｜ ${timestamp}</a>`;
         list.appendChild(li);
       });
     });
