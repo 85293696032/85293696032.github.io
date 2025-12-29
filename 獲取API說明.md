@@ -65,12 +65,4 @@ whatsapp_business_messaging
 whatsapp_business_management
 > 產生權杖(只會顯示一次，請立刻存好)
 
-cmd
-firebase functions:config:set whatsapp.token="剛剛那一大串token"
 
-
-
-
-https://console.firebase.google.com/project/project-253944507993954601/overview
-
-https://us-central1-project-253944507993954601.cloudfunctions.net/whatsappWebhook
