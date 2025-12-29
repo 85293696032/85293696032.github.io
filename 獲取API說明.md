@@ -46,3 +46,31 @@ API設定:
 發佈 > 發佈
 
 ===
+
+產生永久存取權杖:
+
+https://business.facebook.com/latest/settings/business_users/?business_id=2307535139468151
+
+左上選剛建app
+
+左2上 > 用戶 > 系統工作人員
+
+新增 > 隨便名 
+
+指派資產 > 應用程式(剛建app)[完整控制權] > ws帳號(正式號)[完整控制權] > 指派資產
+
+F5 > 產生權杖 > 剛建app > 永不 > 
+business_management
+whatsapp_business_messaging
+whatsapp_business_management
+> 產生權杖(只會顯示一次，請立刻存好)
+
+cmd
+firebase functions:config:set whatsapp.token="剛剛那一大串token"
+
+
+
+
+https://console.firebase.google.com/project/project-253944507993954601/overview
+
+https://us-central1-project-253944507993954601.cloudfunctions.net/whatsappWebhook

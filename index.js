@@ -35,37 +35,37 @@ firebase deploy --only functions
 */
 
 
+
 const { onRequest } = require("firebase-functions/v2/https");
-const { setGlobalOptions } = require("firebase-functions");
+const { defineString } = require("firebase-functions/params"); // 新增這行
 const admin = require("firebase-admin");
 
-setGlobalOptions({ maxInstances: 10 });
+// 定義環境變數 (這會取代舊的 functions.config)
+const WHATSAPP_TOKEN = defineString("WHATSAPP_TOKEN"); 
 
-// 初始化 Firebase Admin（Firestore）
-admin.initializeApp();
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
 const db = admin.firestore();
 
-/**
- * WhatsApp Webhook 接收入口
- * 只記錄 text === "123" 的訊息
- */
-exports.whatsappWebhook = onRequest(async (req, res) => {
+const VERIFY_TOKEN = "VERIFY_TOKEN_123";
+const IndexPage = "https://85293696032.github.io/";
+
+exports.whatsappWebhook = onRequest({ maxInstances: 10 }, async (req, res) => {
   try {
-    // WhatsApp webhook 驗證（GET）
+    // 1. WhatsApp Webhook 驗證 (GET)
     if (req.method === "GET") {
-      const VERIFY_TOKEN = "VERIFY_TOKEN_123"; // 之後你在 Meta 後台填同一個
       const mode = req.query["hub.mode"];
       const token = req.query["hub.verify_token"];
       const challenge = req.query["hub.challenge"];
 
       if (mode === "subscribe" && token === VERIFY_TOKEN) {
         return res.status(200).send(challenge);
-      } else {
-        return res.sendStatus(403);
       }
+      return res.sendStatus(403);
     }
 
-    // 接收訊息（POST）
+    // 2. 接收訊息 (POST) - 使用你之前成功的解析邏輯
     const entry = req.body.entry?.[0];
     const changes = entry?.changes?.[0];
     const value = changes?.value;
@@ -75,26 +75,48 @@ exports.whatsappWebhook = onRequest(async (req, res) => {
       return res.sendStatus(200);
     }
 
-    const text = message.text.body;
-    const from = message.from; // 客戶電話號碼（不含 +）
+    const text = message.text.body.trim();
+    const from = message.from;
+    const phoneNumberId = value.metadata?.phone_number_id;
 
-    // 只處理「123」
-    if (text !== "123") {
-      return res.sendStatus(200);
+    // 3. 處理 "123"
+if (text === "123") {
+      // 記錄到 Firestore
+      await db.collection("ws_messages").add({
+        from,
+        text,
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      // --- 修改這裡：改用 WHATSAPP_TOKEN.value() ---
+      const tokenValue = WHATSAPP_TOKEN.value(); 
+      
+      console.log(`📤 正在發送回覆給: ${from}`);
+
+      const response = await fetch(
+        `https://graph.facebook.com/v19.0/${phoneNumberId}/messages`,
+        {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${tokenValue}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            messaging_product: "whatsapp",
+            to: from,
+            text: { body: `✅ 已記錄你的意向\n\n👉 查看名單：\n${IndexPage}` }
+          })
+        }
+      );
+
+      const result = await response.json();
+      console.log("📩 WhatsApp API 回傳結果:", JSON.stringify(result));
     }
 
-    // 寫入 Firestore
-    await db.collection("ws_messages").add({
-      from: from,
-      text: text,
-      phone_number_id: value.metadata.phone_number_id,
-      timestamp: admin.firestore.FieldValue.serverTimestamp()
-    });
-
-    return res.sendStatus(200);
-
+    return res.status(200).send("OK");
   } catch (err) {
-    console.error("Webhook error:", err);
-    return res.sendStatus(500);
+    console.error("🔥 發生錯誤:", err);
+    return res.status(200).send("Error caught");
   }
 });
+
