@@ -65,4 +65,46 @@ whatsapp_business_messaging
 whatsapp_business_management
 > 產生權杖(只會顯示一次，請立刻存好)
 
+===
 
+firebase deploy --only functions
+後等
+
+? Enter a value for WHATSAPP_TOKEN:
+
+===
+
+ig:
+帳號類型 = 企業
+
+企業管理平台 > 常見問題 > 問題:
+如果你想我幫你將「有購買意慾的人」自動篩出來。請回覆： 1
+
+答:
+好的 👍 
+
+接下來我會示範
+「系統怎樣自動判斷你是高意向」 
+
+請點擊下面 WhatsApp 連結
+並發送：
+⬇️⬇️
+
+https://wa.me/85293696032?text=123
+
+=
+
+其他問題:
+篩單 > 如果你想我幫你將「有購買意慾的人」自動篩出來。請回覆： 1
+1 > 好的 👍 
+
+接下來我會示範
+「系統怎樣自動判斷你是高意向」 
+
+請點擊下面 WhatsApp 連結
+並發送：
+⬇️⬇️
+
+https://wa.me/85293696032?text=123
+
+===
